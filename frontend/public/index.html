@@ -14,175 +14,28 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         height: 100vh;
-        overflow: hidden;
-        position: relative;
-      }
-
-      canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-      }
-
-      .container {
         text-align: center;
-        z-index: 2;
-        animation: fadeIn 2s ease-out;
       }
 
       h1 {
-        font-size: 5rem;
-        margin-bottom: 20px;
-        color: #d1d1d1;
-        background: linear-gradient(45deg, #ffffff, #b0b0b0, #ffffff);
-        -webkit-background-clip: text;
-        color: transparent;
-        animation: shinyEffect 1.5s ease-in-out infinite;
+        font-size: 4rem;
+        margin-bottom: 10px;
+        color: #3b873e; /* Matte green */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
 
-      p {
-        font-size: 1.2rem;
-        margin-bottom: 30px;
-        opacity: 0;
-        animation: fadeInText 3s ease-out 1s forwards;
-      }
-
-      .cta-button {
-        padding: 10px 20px;
-        font-size: 1rem;
-        color: black;
-        background-color: white;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        opacity: 0;
-        animation: fadeInButton 3s ease-out 2s forwards;
-      }
-
-      .cta-button:hover {
-        background-color: #f0f0f0;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-
-      @keyframes shinyEffect {
-        0% {
-          background-position: 100% 0;
-        }
-        50% {
-          background-position: -100% 0;
-        }
-        100% {
-          background-position: 100% 0;
-        }
+      .motto {
+        font-size: 1.5rem;
+        color: #f0f0f0;
+        font-family: 'Courier New', Courier, monospace;
       }
     </style>
   </head>
 
   <body>
-    <canvas id="background"></canvas>
-    <div class="container">
-      <h1>mapGo</h1>
-      <p>Discover real-time traffic, save time with alternate routes, and never be late again!</p>
-      <button class="cta-button">Get Started</button>
-    </div>
-
-    <script>
-      const canvas = document.getElementById('background');
-      const ctx = canvas.getContext('2d');
-
-      // Adjust canvas size to the window size
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      const trafficLights = [];
-
-      // Light gradient effect (from light grey to dark grey)
-      const lightGradient = (x, y, radius) => {
-        const grd = ctx.createRadialGradient(x, y, 0, x, y, radius);
-        grd.addColorStop(0, 'rgba(211, 211, 211, 1)'); // Light grey
-        grd.addColorStop(1, 'rgba(50, 50, 50, 0.8)');   // Dark grey
-        return grd;
-      };
-
-      class Light {
-        constructor(x, y, radius) {
-          this.x = x;
-          this.y = y;
-          this.radius = radius;
-          this.alpha = 0.8; // Default opacity
-          this.speed = 0.1; // Speed of movement towards cursor
-        }
-
-        draw() {
-          const grd = lightGradient(this.x, this.y, this.radius);
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-          ctx.fillStyle = grd;
-          ctx.fill();
-        }
-
-        update(mouseX, mouseY) {
-          // Calculate distance from mouse to light
-          const dx = this.x - mouseX;
-          const dy = this.y - mouseY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          // Move light towards the mouse
-          this.x -= dx * this.speed;
-          this.y -= dy * this.speed;
-
-          // Fade light as the mouse moves away
-          this.alpha = Math.max(0.5, 1 - dist / 500); 
-          this.draw();
-        }
-      }
-
-      function init() {
-        // Generate random traffic lights
-        for (let i = 0; i < 100; i++) {
-          const x = Math.random() * canvas.width;
-          const y = Math.random() * canvas.height;
-          const radius = Math.random() * 5 + 3;
-          trafficLights.push(new Light(x, y, radius));
-        }
-      }
-
-      function animate(mouse) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
-        trafficLights.forEach((light) => light.update(mouse.x, mouse.y)); // Update light behavior
-        requestAnimationFrame(() => animate(mouse)); // Loop the animation
-      }
-
-      // Mouse move event listener
-      const mouse = { x: canvas.width / 2, y: canvas.height / 2 };
-      window.addEventListener('mousemove', (e) => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-      });
-
-      // Resize canvas when window size changes
-      window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        trafficLights.length = 0; // Reset traffic lights
-        init(); // Reinitialize traffic lights
-      });
-
-      // Initialize and animate traffic lights
-      init();
-      animate(mouse);
-    </script>
+    <h1>mapGo</h1>
+    <div class="motto">Your journey, our navigation—on time, every time!</div>
   </body>
 </html>
