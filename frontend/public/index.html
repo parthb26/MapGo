@@ -3,39 +3,82 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MapGo</title>
+    <title>MapGo - Your Journey Companion</title>
     <style>
       body {
         margin: 0;
         padding: 0;
-        font-family: 'Arial', sans-serif;
-        background-color: black;
-        color: white;
+        font-family: 'Helvetica', Arial, sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .hero {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
-        height: 100vh;
         text-align: center;
+        height: 100vh;
+        padding: 0 20px;
+        background: linear-gradient(135deg, #ffffff, #e9ecef);
       }
 
-      h1 {
+      .hero h1 {
+        font-family: 'Helvetica', Arial, sans-serif;
         font-size: 4rem;
-        margin-bottom: 10px;
-        color: #3b873e; /* Matte green */
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        color: #2c3e50;
       }
 
-      .motto {
-        font-size: 1.5rem;
-        color: #f0f0f0;
-        font-family: 'Courier New', Courier, monospace;
+      .hero p {
+        font-size: 1.25rem;
+        margin: 20px 0;
+        max-width: 600px;
+        color: #495057;
+      }
+
+      .hero .cta {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+      }
+
+      .hero .cta:hover {
+        background-color: #0056b3;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 20px;
+        background-color: #343a40;
+        color: white;
+      }
+
+      .footer p {
+        margin: 0;
+        font-size: 0.9rem;
       }
     </style>
   </head>
 
   <body>
-    <h1>mapGo</h1>
-    <div class="motto">Your journey, our navigation—on time, every time!</div>
+    <section class="hero">
+      <h1>this is mapGo!</h1>
+      <p>Your ultimate journey companion—plan routes, save time, and stay informed.</p>
+      <a href="#" class="cta">Get Started</a>
+    </section>
+
+    <footer class="footer">
+      <p>&copy; 2025 MapGo. All Rights Reserved.</p>
+    </footer>
   </body>
 </html>
