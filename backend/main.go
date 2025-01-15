@@ -69,21 +69,27 @@ func getTrafficData(location string) (Traffic, error) {
 
 
 func trafficHandler(w http.ResponseWriter, r *http.Request) {
-	location := "Main St & 5th Avenue"
+    // Get location from query parameters
+    location := r.URL.Query().Get("location")
+    if location == "" {
+        http.Error(w, "Location parameter is required", http.StatusBadRequest)
+        return
+    }
 
-	trafficData, err := getTrafficData(location)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Error fetching traffic data: %v", err), http.StatusInternalServerError)
-		return
-	}
+    trafficData, err := getTrafficData(location)
+    if err != nil {
+        http.Error(w, fmt.Sprintf("Error fetching traffic data: %v", err), http.StatusInternalServerError)
+        return
+    }
 
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(trafficData)
-	if err != nil {
-		http.Error(w, "Unable to encode data", http.StatusInternalServerError)
-		return
-	}
+    w.Header().Set("Content-Type", "application/json")
+    err = json.NewEncoder(w).Encode(trafficData)
+    if err != nil {
+        http.Error(w, "Unable to encode data", http.StatusInternalServerError)
+        return
+    }
 }
+
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Welcome to GoMap Backend!")
