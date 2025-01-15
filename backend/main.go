@@ -25,30 +25,48 @@ type Traffic struct {
 }
 
 func getTrafficData(location string) (Traffic, error) {
-	client, err := maps.NewClient(maps.WithAPIKey(os.Getenv("GOOGLE_MAPS_API_KEY")))
+	apiKey := os.Getenv("GOOGLE_MAPS_API_KEY")
+
+	// Check if the API key is set
+	if apiKey == "" {
+		// Return mock data if the API key is not available
+		fmt.Println("No API key found. Returning mock data.")
+		return Traffic{
+			Location:      location,
+			Status:        "Moderate Traffic",
+			EstimatedTime: "15 mins",
+		}, nil
+	}
+
+	// Initialize the Google Maps client
+	client, err := maps.NewClient(maps.WithAPIKey(apiKey))
 	if err != nil {
 		return Traffic{}, fmt.Errorf("failed to create Google Maps client: %v", err)
 	}
 
+	// Request traffic data for the location
 	r := &maps.DirectionsRequest{
 		Origin:      location,
-		Destination: location,
+		Destination: location, // Example: circular trip
 		Mode:        maps.TravelModeDriving,
 	}
 
+	// Make the API call
 	resp, _, err := client.Directions(context.Background(), r)
 	if err != nil {
 		return Traffic{}, fmt.Errorf("failed to get directions: %v", err)
 	}
 
+	// Extract traffic details : for testing purposes for now
 	traffic := Traffic{
 		Location:      location,
-		Status:        "Heavy Traffic", // Replace with actual data from API response
+		Status:        "Heavy Traffic", // Placeholder for real API data
 		EstimatedTime: resp[0].Legs[0].DurationInTraffic.String(),
 	}
 
 	return traffic, nil
 }
+
 
 func trafficHandler(w http.ResponseWriter, r *http.Request) {
 	location := "Main St & 5th Avenue"
