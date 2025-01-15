@@ -24,6 +24,13 @@ type Traffic struct {
 	EstimatedTime string `json:"estimated_time"`
 }
 
+// Enable CORS headers for cross-origin requests
+func enableCORS(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+}
+
 func getTrafficData(location string) (Traffic, error) {
 	apiKey := os.Getenv("GOOGLE_MAPS_API_KEY")
 
@@ -57,7 +64,7 @@ func getTrafficData(location string) (Traffic, error) {
 		return Traffic{}, fmt.Errorf("failed to get directions: %v", err)
 	}
 
-	// Extract traffic details : for testing purposes for now
+	// Extract traffic details: for testing purposes for now
 	traffic := Traffic{
 		Location:      location,
 		Status:        "Heavy Traffic", // Placeholder for real API data
@@ -67,45 +74,47 @@ func getTrafficData(location string) (Traffic, error) {
 	return traffic, nil
 }
 
-
 func trafficHandler(w http.ResponseWriter, r *http.Request) {
-    // Get location from query parameters
-    location := r.URL.Query().Get("location")
-    if location == "" {
-        http.Error(w, "Location parameter is required", http.StatusBadRequest)
-        return
-    }
+	// Enable CORS for this request
+	enableCORS(w)
 
-    trafficData, err := getTrafficData(location)
-    if err != nil {
-        http.Error(w, fmt.Sprintf("Error fetching traffic data: %v", err), http.StatusInternalServerError)
-        return
-    }
+	// Get location from query parameters
+	location := r.URL.Query().Get("location")
+	if location == "" {
+		http.Error(w, "Location parameter is required", http.StatusBadRequest)
+		return
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    err = json.NewEncoder(w).Encode(trafficData)
-    if err != nil {
-        http.Error(w, "Unable to encode data", http.StatusInternalServerError)
-        return
-    }
+	trafficData, err := getTrafficData(location)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error fetching traffic data: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(trafficData)
+	if err != nil {
+		http.Error(w, "Unable to encode data", http.StatusInternalServerError)
+		return
+	}
 }
 
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Welcome to GoMap Backend!")
-}
-
+// Main function to set up routes and start the server
 func main() {
-    // Serve static files 
-    http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("."))))
+	// Serve static files (e.g., HTML, CSS, JavaScript)
+	http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("."))))
 
-    // Traffic API endpoint
-    http.HandleFunc("/traffic", trafficHandler)
+	// Traffic API endpoint
+	http.HandleFunc("/traffic", trafficHandler)
 
-    fmt.Println("Server is running on http://localhost:8080")
-    err := http.ListenAndServe(":8080", nil)
-    if err != nil {
-        fmt.Println("Error starting server:", err)
-    }
+	// Optional: Welcome page or a simple handler (if needed)
+	http.HandleFunc("/welcome", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Welcome to GoMap Backend!")
+	})
+
+	fmt.Println("Server is running on http://localhost:8080")
+	err := http.ListenAndServe(":8081", nil)
+	if err != nil {
+		fmt.Println("Error starting server:", err)
+	}
 }
-
