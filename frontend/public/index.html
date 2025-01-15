@@ -1,84 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MapGo - Your Journey Companion</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoMap - Traffic Information</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Helvetica', Arial, sans-serif;
-        background-color: #f8f9fa;
-        color: #333;
-      }
-
-      .hero {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        height: 100vh;
-        padding: 0 20px;
-        background: linear-gradient(135deg, #ffffff, #e9ecef);
-      }
-
-      .hero h1 {
-        font-family: 'Helvetica', Arial, sans-serif;
-        font-size: 4rem;
-        margin: 0;
-        color: #2c3e50;
-      }
-
-      .hero p {
-        font-size: 1.25rem;
-        margin: 20px 0;
-        max-width: 600px;
-        color: #495057;
-      }
-
-      .hero .cta {
-        display: inline-block;
-        margin-top: 20px;
-        padding: 10px 20px;
-        font-size: 1rem;
-        font-weight: 600;
-        color: white;
-        background-color: #007bff;
-        border: none;
-        border-radius: 5px;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-      }
-
-      .hero .cta:hover {
-        background-color: #0056b3;
-      }
-
-      .footer {
-        text-align: center;
-        padding: 20px;
-        background-color: #343a40;
-        color: white;
-      }
-
-      .footer p {
-        margin: 0;
-        font-size: 0.9rem;
-      }
+        #map { height: 400px; width: 100%; }
+        body { font-family: Arial, sans-serif; padding: 20px; }
     </style>
-  </head>
+</head>
+<body>
 
-  <body>
-    <section class="hero">
-      <h1>this is mapGo!</h1>
-      <p>Your ultimate journey companion—plan routes, save time, and stay informed.</p>
-      <a href="#" class="cta">Get Started</a>
-    </section>
+<h1>GoMap - Traffic Information</h1>
+<div>
+    <label for="location">Enter a location:</label>
+    <input type="text" id="location" placeholder="e.g. Main St & 5th Avenue">
+    <button id="getTraffic">Get Traffic Info</button>
+</div>
 
-    <footer class="footer">
-      <p>&copy; 2025 MapGo. All Rights Reserved.</p>
-    </footer>
-  </body>
+<h3>Traffic Status:</h3>
+<div id="trafficStatus"></div>
+<div id="map"></div>
+
+<script>
+    $(document).ready(function () {
+        $('#getTraffic').click(function () {
+            var location = $('#location').val();
+            if (location) {
+                $.get(`/traffic?location=${encodeURIComponent(location)}`, function (data) {
+                    $('#trafficStatus').html(`
+                        <strong>Location:</strong> ${data.location}<br>
+                        <strong>Status:</strong> ${data.status}<br>
+                        <strong>Estimated Time:</strong> ${data.estimated_time}
+                    `);
+                    
+                    // Initialize Google Maps to show the location
+                    initMap(data.location);
+                }).fail(function () {
+                    $('#trafficStatus').html('Error fetching traffic data.');
+                });
+            } else {
+                alert('Please enter a location.');
+            }
+        });
+    });
+
+    function initMap(location) {
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({'address': location}, function(results, status) {
+            if (status === 'OK') {
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 12,
+                    center: results[0].geometry.location
+                });
+
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+});
+</script>
+
+</body>
 </html>
