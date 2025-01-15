@@ -7,8 +7,16 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	"googlemaps.github.io/maps"
 )
+
+// Load environment variables during initialization
+func init() {
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("Error loading .env file")
+	}
+}
 
 type Traffic struct {
 	Location      string `json:"location"`
@@ -17,26 +25,22 @@ type Traffic struct {
 }
 
 func getTrafficData(location string) (Traffic, error) {
-	// Initialize the Google Maps client
 	client, err := maps.NewClient(maps.WithAPIKey(os.Getenv("GOOGLE_MAPS_API_KEY")))
 	if err != nil {
 		return Traffic{}, fmt.Errorf("failed to create Google Maps client: %v", err)
 	}
 
-	// Request traffic data for the location
 	r := &maps.DirectionsRequest{
 		Origin:      location,
-		Destination: location, // Example: circular trip
+		Destination: location,
 		Mode:        maps.TravelModeDriving,
 	}
 
-	// Make the API call
 	resp, _, err := client.Directions(context.Background(), r)
 	if err != nil {
 		return Traffic{}, fmt.Errorf("failed to get directions: %v", err)
 	}
 
-	// Extract traffic details (simplified example)
 	traffic := Traffic{
 		Location:      location,
 		Status:        "Heavy Traffic", // Replace with actual data from API response
@@ -47,7 +51,6 @@ func getTrafficData(location string) (Traffic, error) {
 }
 
 func trafficHandler(w http.ResponseWriter, r *http.Request) {
-	// Hardcoded location for simplicity
 	location := "Main St & 5th Avenue"
 
 	trafficData, err := getTrafficData(location)
@@ -74,7 +77,6 @@ func main() {
 
 	fmt.Println("Server is running on http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
-
 	if err != nil {
 		fmt.Println("Error starting server:", err)
 	}
